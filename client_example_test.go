@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	bunny "github.com/simplesurance/bunny-go"
+	"github.com/nrdcg/bunny-go"
 )
 
 func Example() {

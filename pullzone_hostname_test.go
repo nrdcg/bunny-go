@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 
-	bunny "github.com/simplesurance/bunny-go"
+	"github.com/nrdcg/bunny-go"
 )
 
 func TestPullZoneAddRemoveHostname(t *testing.T) {

@@ -9,28 +9,18 @@ on:
       - "*"
 
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.18
-
-      - name: build
-        run: go build -v ./...
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Test
         run: go test -v -race ./...
+
+      - name: build
+        run: go build -v ./...

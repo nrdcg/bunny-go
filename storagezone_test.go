@@ -7,10 +7,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
-	bunny "github.com/simplesurance/bunny-go"
+	"github.com/nrdcg/bunny-go"
 )
 
 func TestStorageZoneCRUD(t *testing.T) {
@@ -20,9 +20,9 @@ func TestStorageZoneCRUD(t *testing.T) {
 	szOrigin := "http://bunny.net"
 	szRegion := "NY"
 	szAddopts := bunny.StorageZoneAddOptions{
-		Name: &szName,
-		OriginURL: &szOrigin,
-		Region: &szRegion,
+		Name:               &szName,
+		OriginURL:          &szOrigin,
+		Region:             &szRegion,
 		ReplicationRegions: []string{"DE"},
 	}
 
@@ -46,8 +46,8 @@ func TestStorageZoneCRUD(t *testing.T) {
 	szUpdateOrigin := szOrigin + "/updated"
 	szUpdateRewrite404To200 := true
 	updateOpts := bunny.StorageZoneUpdateOptions{
-		OriginURL: &szUpdateOrigin,
-		Rewrite404To200: &szUpdateRewrite404To200,
+		OriginURL:          &szUpdateOrigin,
+		Rewrite404To200:    &szUpdateRewrite404To200,
 		ReplicationRegions: []string{"LA"},
 	}
 	updateErr := clt.StorageZone.Update(context.Background(), *sz.ID, &updateOpts)
@@ -59,7 +59,7 @@ func TestStorageZoneCRUD(t *testing.T) {
 	assert.Equal(
 		t,
 		"LA",
-		getUpdatedSz.ReplicationRegions[len(getUpdatedSz.ReplicationRegions) - 1],
+		getUpdatedSz.ReplicationRegions[len(getUpdatedSz.ReplicationRegions)-1],
 		"storage zone replication region should be updated correctly",
 	)
 
@@ -68,7 +68,7 @@ func TestStorageZoneCRUD(t *testing.T) {
 	require.NoError(t, err, "storage zone list failed after add")
 	assert.Equal(
 		t,
-		*listSzBefore.TotalItems + 1,
+		*listSzBefore.TotalItems+1,
 		*listSzAfter.TotalItems,
 		"storage zones total items should increase by exactly 1",
 	)

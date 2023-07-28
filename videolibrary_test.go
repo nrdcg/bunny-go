@@ -7,10 +7,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
-	bunny "github.com/simplesurance/bunny-go"
+	"github.com/nrdcg/bunny-go"
 )
 
 func TestVideoLibraryCRUD(t *testing.T) {
@@ -19,7 +19,7 @@ func TestVideoLibraryCRUD(t *testing.T) {
 	vlName := randomResourceName("videolibrary")
 	vlRegion := "NY"
 	vlAddopts := bunny.VideoLibraryAddOptions{
-		Name: &vlName,
+		Name:               &vlName,
 		ReplicationRegions: []string{vlRegion},
 	}
 
@@ -45,9 +45,9 @@ func TestVideoLibraryCRUD(t *testing.T) {
 	setTrue := true
 	setFalse := false
 	updateOpts := bunny.VideoLibraryUpdateOptions{
-		Name: &newName,
+		Name:                             &newName,
 		PlayerTokenAuthenticationEnabled: &setTrue,
-		AllowDirectPlay: &setFalse,
+		AllowDirectPlay:                  &setFalse,
 	}
 	_, updateErr := clt.VideoLibrary.Update(context.Background(), *vl.ID, &updateOpts)
 	assert.Nil(t, updateErr)
@@ -81,7 +81,7 @@ func TestVideoLibraryCRUD(t *testing.T) {
 	assert.Nil(t, listVlAfter.Items[0].APIAccessKey)
 	assert.Equal(
 		t,
-		*listVlBefore.TotalItems + 1,
+		*listVlBefore.TotalItems+1,
 		*listVlAfter.TotalItems,
 		"video libraries total items should increase by exactly 1",
 	)

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	bunny "github.com/simplesurance/bunny-go"
+	"github.com/nrdcg/bunny-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,7 +57,6 @@ func createPullZone(t *testing.T, clt *bunny.Client, opts *bunny.PullZoneAddOpti
 	return pz
 }
 
-
 // createStorageZone creates a Storage Zone via the bunny client and registers a
 // testing cleanup function to remove it when the test terminates.
 // If creating the Storage Zone fails, t.Fatal is called.
@@ -83,7 +82,6 @@ func createStorageZone(t *testing.T, clt *bunny.Client, opts *bunny.StorageZoneA
 
 	return sz
 }
-
 
 // createVideoLibrary creates a Video Library via the bunny client and registers a
 // testing cleanup function to remove it when the test terminates.
