@@ -19,10 +19,5 @@ type VideoLibraryAddOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/videolibrarypublic_add
 func (s *VideoLibraryService) Add(ctx context.Context, opts *VideoLibraryAddOptions) (*VideoLibrary, error) {
-	return resourcePostWithResponse[VideoLibrary](
-		ctx,
-		s.client,
-		"/videolibrary",
-		opts,
-	)
+	return resourcePostWithResponse[VideoLibrary](ctx, s.client, "/videolibrary", opts)
 }

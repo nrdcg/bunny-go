@@ -17,16 +17,14 @@ func WithHTTPResponseLogger(logger Logf) Option {
 	}
 }
 
-// WithUserAgent is an option to specify the value of the User-Agent HTTP
-// Header.
+// WithUserAgent is an option to specify the value of the User-Agent HTTP Header.
 func WithUserAgent(userAgent string) Option {
 	return func(clt *Client) {
 		clt.userAgent = userAgent
 	}
 }
 
-// WithLogger is an option to set a log function to which informal and warning
-// messages will be logged.
+// WithLogger is an option to set a log function to which informal and warning messages will be logged.
 func WithLogger(logger Logf) Option {
 	return func(clt *Client) {
 		clt.logf = logger

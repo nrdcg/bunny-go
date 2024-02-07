@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// VideoLibrary represents the response of the the List and Get Video Library API endpoint.
+// VideoLibrary represents the response of the List and Get Video Library API endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/videolibrarypublic_index2 https://docs.bunny.net/reference/videolibrarypublic_index
 type VideoLibrary struct {
@@ -62,7 +62,7 @@ type VideoLibrary struct {
 	FontFamily                       *string  `json:"FontFamily,omitempty"`
 }
 
-// VideoLibraryGetOpts represents optional query parameters available when Getting or Listing Video Libraries
+// VideoLibraryGetOpts represents optional query parameters available when Getting or Listing Video Libraries.
 type VideoLibraryGetOpts struct {
 	IncludeAccessKey bool `url:"includeAccessKey"`
 }
@@ -70,11 +70,7 @@ type VideoLibraryGetOpts struct {
 // Get retrieves the Video Library with the given id.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/videolibrarypublic_index2
-func (s *VideoLibraryService) Get(
-	ctx context.Context,
-	id int64,
-	opts *VideoLibraryGetOpts,
-) (*VideoLibrary, error) {
+func (s *VideoLibraryService) Get(ctx context.Context, id int64, opts *VideoLibraryGetOpts) (*VideoLibrary, error) {
 	path := fmt.Sprintf("videolibrary/%d", id)
 	return resourceGet[VideoLibrary](ctx, s.client, path, opts)
 }

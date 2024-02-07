@@ -13,11 +13,11 @@ import (
 )
 
 func TestCheckRespWithEmptyUnsuccessfulResp(t *testing.T) {
-	req, err := http.NewRequest("get", "http://test.de", nil)
+	req, err := http.NewRequest(http.MethodGet, "http://test.de", nil)
 	require.NoError(t, err)
 
 	resp := http.Response{
-		StatusCode: 400,
+		StatusCode: http.StatusBadRequest,
 		Body:       io.NopCloser(strings.NewReader("")),
 	}
 
@@ -27,7 +27,8 @@ func TestCheckRespWithEmptyUnsuccessfulResp(t *testing.T) {
 	require.Error(t, err)
 	require.IsType(t, &HTTPError{}, err)
 
-	httpErr := err.(*HTTPError)
+	var httpErr *HTTPError
+	assert.ErrorAs(t, err, &httpErr)
 	assert.Empty(t, httpErr.Errors)
 }
 
@@ -42,15 +43,15 @@ func TestCheckRespWithJSONBody(t *testing.T) {
 	require.NoError(t, err)
 
 	const reqURL = "http://test.de"
-	req, err := http.NewRequest("get", reqURL, nil)
+	req, err := http.NewRequest(http.MethodGet, reqURL, nil)
 	require.NoError(t, err)
 
 	hdr := http.Header{}
-	hdr.Add("content-type", "application/json; charset=utf-8")
+	hdr.Add("Content-Type", "application/json; charset=utf-8")
 
 	resp := http.Response{
 		Header:     hdr,
-		StatusCode: 400,
+		StatusCode: http.StatusBadRequest,
 		Body:       io.NopCloser(bytes.NewReader(buf)),
 	}
 
@@ -60,7 +61,8 @@ func TestCheckRespWithJSONBody(t *testing.T) {
 	require.Error(t, err)
 	require.IsType(t, &APIError{}, err, "error: "+err.Error())
 
-	retAPIErr := err.(*APIError)
+	var retAPIErr *APIError
+	assert.ErrorAs(t, err, &retAPIErr)
 	assert.Equal(t, apiErr.ErrorKey, retAPIErr.ErrorKey, "unexpected errorKey value")
 	assert.Equal(t, apiErr.Field, retAPIErr.Field, "unexpected field value")
 	assert.Equal(t, apiErr.Message, retAPIErr.Message, "unexpected message value")
@@ -74,11 +76,11 @@ func TestCheckRespWithJSONBodyAndMissingContentType(t *testing.T) {
 	buf, err := json.Marshal(&APIError{Message: "something br0ke"})
 	require.NoError(t, err)
 
-	req, err := http.NewRequest("get", "", nil)
+	req, err := http.NewRequest(http.MethodGet, "", nil)
 	require.NoError(t, err)
 
 	resp := http.Response{
-		StatusCode: 400,
+		StatusCode: http.StatusBadRequest,
 		Body:       io.NopCloser(bytes.NewReader(buf)),
 	}
 
@@ -88,10 +90,11 @@ func TestCheckRespWithJSONBodyAndMissingContentType(t *testing.T) {
 	require.Error(t, err)
 	require.IsType(t, &HTTPError{}, err, "error: "+err.Error())
 
-	retErr := err.(*HTTPError)
+	var retErr *HTTPError
+	assert.ErrorAs(t, err, &retErr)
 	assert.Equal(t, buf, retErr.RespBody)
 
-	assert.EqualError(t, retErr.Errors[0], "processing response failed: content-type header is missing or empty")
+	assert.EqualError(t, retErr.Errors[0], "processing response failed: Content-Type header is missing or empty")
 }
 
 func TestUnmarshalHTTPJSONBody(t *testing.T) {
@@ -103,7 +106,7 @@ func TestUnmarshalHTTPJSONBody(t *testing.T) {
 	require.NoError(t, err)
 
 	hdr := http.Header{}
-	hdr.Add("content-type", "application/json; charset=utf-8")
+	hdr.Add("Content-Type", "application/json; charset=utf-8")
 	resp := http.Response{
 		Body:   io.NopCloser(bytes.NewReader(buf)),
 		Header: hdr,
@@ -118,7 +121,6 @@ func TestUnmarshalHTTPJSONBody(t *testing.T) {
 
 	require.NotNil(t, msgOut.Value)
 	require.Equal(t, *msgIn.Value, *msgOut.Value)
-
 }
 
 func TestUnmarshalHTTPJSONBodyWithMissingContentType(t *testing.T) {
@@ -140,13 +142,14 @@ func TestUnmarshalHTTPJSONBodyWithMissingContentType(t *testing.T) {
 	err = clt.unmarshalHTTPJSONBody(&resp, url, &msgOut)
 	require.Error(t, err)
 
-	require.IsType(t, err, &HTTPError{})
+	require.IsType(t, &HTTPError{}, err)
 
-	httpErr := err.(*HTTPError)
+	var httpErr *HTTPError
+	assert.ErrorAs(t, err, &httpErr)
 	assert.Equal(t, httpErr.RequestURL, url)
 	assert.Equal(t, httpErr.StatusCode, code)
 	assert.Len(t, httpErr.Errors, 1)
-	assert.EqualError(t, httpErr.Errors[0], "processing response failed: content-type header is missing or empty")
+	assert.EqualError(t, httpErr.Errors[0], "processing response failed: Content-Type header is missing or empty")
 	assert.Equal(t, buf, httpErr.RespBody)
 }
 
@@ -156,7 +159,7 @@ func TestUnmarshalHTTPJSONBodyWithWrongContentType(t *testing.T) {
 	require.NoError(t, err)
 
 	hdr := http.Header{}
-	hdr.Add("content-type", "application/binary")
+	hdr.Add("Content-Type", "application/binary")
 
 	code := 200
 	resp := http.Response{
@@ -173,12 +176,13 @@ func TestUnmarshalHTTPJSONBodyWithWrongContentType(t *testing.T) {
 	err = clt.unmarshalHTTPJSONBody(&resp, url, &msgOut)
 	require.Error(t, err)
 
-	require.IsType(t, err, &HTTPError{})
+	require.IsType(t, &HTTPError{}, err)
 
-	httpErr := err.(*HTTPError)
+	var httpErr *HTTPError
+	assert.ErrorAs(t, err, &httpErr)
 	assert.Equal(t, httpErr.RequestURL, url)
 	assert.Equal(t, httpErr.StatusCode, code)
 	assert.Equal(t, buf, httpErr.RespBody)
 	assert.Len(t, httpErr.Errors, 1)
-	assert.EqualError(t, httpErr.Errors[0], "processing response failed: expected content-type to be \"application/json\", got: \"application/binary\"")
+	assert.EqualError(t, httpErr.Errors[0], "processing response failed: expected Content-Type to be \"application/json\", got: \"application/binary\"")
 }

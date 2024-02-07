@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// StorageZone represents the response of the the List and Get Storage Zone API endpoint.
+// StorageZone represents the response of the List and Get Storage Zone API endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/storagezonepublic_index2 https://docs.bunny.net/reference/storagezonepublic_index
 type StorageZone struct {

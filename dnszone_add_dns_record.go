@@ -37,10 +37,5 @@ type AddOrUpdateDNSRecordOptions struct {
 // Bunny.net API docs: https://docs.bunny.net/reference/dnszonepublic_addrecord
 func (s *DNSZoneService) AddDNSRecord(ctx context.Context, dnsZoneID int64, opts *AddOrUpdateDNSRecordOptions) (*DNSRecord, error) {
 	path := fmt.Sprintf("dnszone/%d/records", dnsZoneID)
-	return resourcePutWithResponse[DNSRecord](
-		ctx,
-		s.client,
-		path,
-		opts,
-	)
+	return resourcePutWithResponse[DNSRecord](ctx, s.client, path, opts)
 }

@@ -42,14 +42,7 @@ func (p *PaginationOptions) ensureConstraints() {
 	}
 }
 
-func resourceList[Resp any](
-	ctx context.Context,
-	client *Client,
-	path string,
-	opts *PaginationOptions,
-) (*Resp, error) {
-	var res Resp
-
+func resourceList[Resp any](ctx context.Context, client *Client, path string, opts *PaginationOptions) (*Resp, error) {
 	// Ensure that opts.Page is >=1, if it isn't bunny.net will send a
 	// different response JSON object, that contains only a single Object,
 	// without items and paginations fields. Enforcing opts.page =>1 ensures
@@ -67,6 +60,8 @@ func resourceList[Resp any](
 	if err != nil {
 		return nil, err
 	}
+
+	var res Resp
 
 	if err := client.sendRequest(ctx, req, &res); err != nil {
 		return nil, err

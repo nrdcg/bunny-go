@@ -79,11 +79,9 @@ func (e *APIError) Error() string {
 			res.WriteString(": ")
 			res.WriteString(e.Field)
 		}
-	} else {
-		if e.Field != "" {
-			res.WriteString(", ")
-			res.WriteString(e.Field)
-		}
+	} else if e.Field != "" {
+		res.WriteString(", ")
+		res.WriteString(e.Field)
 	}
 
 	if e.Message != "" {

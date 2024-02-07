@@ -16,13 +16,12 @@ import (
 func TestStorageZoneCRUD(t *testing.T) {
 	clt := newClient(t)
 
-	szName := randomResourceName("storagezone")
 	szOrigin := "http://bunny.net"
-	szRegion := "NY"
+
 	szAddopts := bunny.StorageZoneAddOptions{
-		Name:               &szName,
-		OriginURL:          &szOrigin,
-		Region:             &szRegion,
+		Name:               pointer(randomResourceName("storagezone")),
+		OriginURL:          pointer(szOrigin),
+		Region:             pointer("NY"),
 		ReplicationRegions: []string{"DE"},
 	}
 
@@ -32,44 +31,27 @@ func TestStorageZoneCRUD(t *testing.T) {
 	sz := createStorageZone(t, clt, &szAddopts)
 
 	// get the newly created storage zone
-	getSz, err := clt.StorageZone.Get(context.Background(), *sz.ID)
+	getSz, err := clt.StorageZone.Get(context.Background(), deref(sz.ID))
 	require.NoError(t, err, "storage zone get failed after adding")
 	assert.NotNil(t, getSz.ID)
-	assert.Equal(
-		t,
-		getSz.ReplicationRegions[0],
-		"DE",
-		"storage zone replication region should be set correctly",
-	)
+	assert.Equal(t, getSz.ReplicationRegions[0], "DE", "storage zone replication region should be set correctly")
 
 	// update the storage zone
-	szUpdateOrigin := szOrigin + "/updated"
-	szUpdateRewrite404To200 := true
 	updateOpts := bunny.StorageZoneUpdateOptions{
-		OriginURL:          &szUpdateOrigin,
-		Rewrite404To200:    &szUpdateRewrite404To200,
+		OriginURL:          pointer(szOrigin + "/updated"),
+		Rewrite404To200:    pointer(true),
 		ReplicationRegions: []string{"LA"},
 	}
-	updateErr := clt.StorageZone.Update(context.Background(), *sz.ID, &updateOpts)
+	updateErr := clt.StorageZone.Update(context.Background(), deref(sz.ID), &updateOpts)
 	assert.Nil(t, updateErr)
 
 	// get the updated storage zone and validate updated properties
-	getUpdatedSz, err := clt.StorageZone.Get(context.Background(), *sz.ID)
+	getUpdatedSz, err := clt.StorageZone.Get(context.Background(), deref(sz.ID))
 	assert.NotNil(t, getUpdatedSz.ID)
-	assert.Equal(
-		t,
-		"LA",
-		getUpdatedSz.ReplicationRegions[len(getUpdatedSz.ReplicationRegions)-1],
-		"storage zone replication region should be updated correctly",
-	)
+	assert.Equal(t, "LA", getUpdatedSz.ReplicationRegions[len(getUpdatedSz.ReplicationRegions)-1], "storage zone replication region should be updated correctly")
 
 	// check the total number of storage zones is the expected amount
 	listSzAfter, err := clt.StorageZone.List(context.Background(), nil)
 	require.NoError(t, err, "storage zone list failed after add")
-	assert.Equal(
-		t,
-		*listSzBefore.TotalItems+1,
-		*listSzAfter.TotalItems,
-		"storage zones total items should increase by exactly 1",
-	)
+	assert.Equal(t, deref(listSzBefore.TotalItems+1), deref(listSzAfter.TotalItems), "storage zones total items should increase by exactly 1")
 }

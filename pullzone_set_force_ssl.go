@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// SetForceSSLOptions represents the message is to the the Set Force SSL Endpoint.
+// SetForceSSLOptions represents the message is to the Set Force SSL Endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_setforcessl
 type SetForceSSLOptions struct {

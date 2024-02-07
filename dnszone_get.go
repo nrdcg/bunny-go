@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Constants for the Type field of a DNS Record
+// Constants for the Type field of a DNS Record.
 const (
 	DNSRecordTypeA     int = 0
 	DNSRecordTypeAAAA  int = 1
@@ -21,12 +21,12 @@ const (
 	DNSRecordTypeNS    int = 12
 )
 
-// DNSZone represents the response of the the List and Get DNS Zone API endpoint.
+// DNSZone represents the response of the List and Get DNS Zone API endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/dnszonepublic_index2 https://docs.bunny.net/reference/dnszonepublic_index
 //
 // Timestamps formatted in YYYY-MM-DDTHH:MM:SS style.
-// Golang time layout: 2006-01-02T15:04:05
+// Golang time layout: 2006-01-02T15:04:05.
 type DNSZone struct {
 	ID *int64 `json:"Id,omitempty"`
 

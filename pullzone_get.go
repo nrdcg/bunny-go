@@ -19,7 +19,7 @@ const (
 	MatchingTypeNone
 )
 
-// PullZone represents the response of the the List and Get Pull Zone API endpoint.
+// PullZone represents the response of the List and Get Pull Zone API endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_index2 https://docs.bunny.net/reference/pullzonepublic_index
 type PullZone struct {

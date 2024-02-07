@@ -23,10 +23,5 @@ type StorageZoneAddOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/storagezonepublic_add
 func (s *StorageZoneService) Add(ctx context.Context, opts *StorageZoneAddOptions) (*StorageZone, error) {
-	return resourcePostWithResponse[StorageZone](
-		ctx,
-		s.client,
-		"/storagezone",
-		opts,
-	)
+	return resourcePostWithResponse[StorageZone](ctx, s.client, "/storagezone", opts)
 }

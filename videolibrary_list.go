@@ -16,13 +16,10 @@ type VideoLibraryListOpts struct {
 
 // List retrieves the Video Libraries.
 // If opts is nil, DefaultPaginationPerPage and DefaultPaginationPage will be used.
-// if opts.Page or or opts.PerPage is < 1, the related DefaultPagination values are used.
+// if opts.Page or opts.PerPage is < 1, the related DefaultPagination values are used.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/videolibrarypublic_index
-func (s *VideoLibraryService) List(
-	ctx context.Context,
-	opts *VideoLibraryListOpts,
-) (*VideoLibraries, error) {
+func (s *VideoLibraryService) List(ctx context.Context, opts *VideoLibraryListOpts) (*VideoLibraries, error) {
 	const path = "/videolibrary"
 	var res VideoLibraries
 

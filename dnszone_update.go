@@ -24,10 +24,5 @@ type DNSZoneUpdateOptions struct {
 // Bunny.net API docs: https://docs.bunny.net/reference/dnszonepublic_update
 func (s *DNSZoneService) Update(ctx context.Context, id int64, opts *DNSZoneUpdateOptions) (*DNSZone, error) {
 	path := fmt.Sprintf("dnszone/%d", id)
-	return resourcePostWithResponse[DNSZone](
-		ctx,
-		s.client,
-		path,
-		opts,
-	)
+	return resourcePostWithResponse[DNSZone](ctx, s.client, path, opts)
 }

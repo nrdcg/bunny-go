@@ -8,10 +8,5 @@ import "context"
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/dnszonepublic_add
 func (s *DNSZoneService) Add(ctx context.Context, opts *DNSZone) (*DNSZone, error) {
-	return resourcePostWithResponse[DNSZone](
-		ctx,
-		s.client,
-		"/dnszone",
-		opts,
-	)
+	return resourcePostWithResponse[DNSZone](ctx, s.client, "/dnszone", opts)
 }

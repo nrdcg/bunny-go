@@ -33,12 +33,7 @@ func TestVideoLibraryCRUD(t *testing.T) {
 	require.NoError(t, err, "video library get failed after adding")
 	assert.NotNil(t, getVl.ID)
 	assert.Nil(t, getVl.APIAccessKey)
-	assert.Equal(
-		t,
-		vlRegion,
-		getVl.ReplicationRegions[0],
-		"video library replication region should be set correctly",
-	)
+	assert.Equal(t, vlRegion, getVl.ReplicationRegions[0], "video library replication region should be set correctly")
 
 	// update the video library
 	newName := vlName + "-updated"
@@ -56,35 +51,15 @@ func TestVideoLibraryCRUD(t *testing.T) {
 	getUpdatedVl, err := clt.VideoLibrary.Get(context.Background(), *vl.ID, &bunny.VideoLibraryGetOpts{true})
 	assert.NotNil(t, getUpdatedVl.ID)
 	assert.NotNil(t, getUpdatedVl.APIAccessKey)
-	assert.Equal(
-		t,
-		newName,
-		*getUpdatedVl.Name,
-		"video library Name should be updated correctly",
-	)
-	assert.Equal(
-		t,
-		true,
-		*getUpdatedVl.PlayerTokenAuthenticationEnabled,
-		"video library PlayerTokenAuthenticationEnabled should be updated correctly",
-	)
-	assert.Equal(
-		t,
-		false,
-		*getUpdatedVl.AllowDirectPlay,
-		"video library AllowDirectPlay should be updated correctly",
-	)
+	assert.Equal(t, newName, *getUpdatedVl.Name, "video library Name should be updated correctly")
+	assert.Equal(t, true, *getUpdatedVl.PlayerTokenAuthenticationEnabled, "video library PlayerTokenAuthenticationEnabled should be updated correctly")
+	assert.Equal(t, false, *getUpdatedVl.AllowDirectPlay, "video library AllowDirectPlay should be updated correctly")
 
 	// check the total number of video libraries is the expected amount
 	listVlAfter, err := clt.VideoLibrary.List(context.Background(), nil)
 	require.NoError(t, err, "video library list failed after add")
 	assert.Nil(t, listVlAfter.Items[0].APIAccessKey)
-	assert.Equal(
-		t,
-		*listVlBefore.TotalItems+1,
-		*listVlAfter.TotalItems,
-		"video libraries total items should increase by exactly 1",
-	)
+	assert.Equal(t, *listVlBefore.TotalItems+1, *listVlAfter.TotalItems, "video libraries total items should increase by exactly 1")
 
 	// check that listing video libraries and requesting keys works
 	listVlWithKeys, err := clt.VideoLibrary.List(context.Background(), &bunny.VideoLibraryListOpts{

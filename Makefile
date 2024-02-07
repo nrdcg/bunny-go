@@ -1,19 +1,18 @@
-default: build
+.PHONY: default clean check test
 
-.PHONY: build
+default: clean check test build
+
+test: clean
+	go test -v -cover ./...
+
+clean:
+	rm -f cover.out
+
 build:
-	$(info * compiling)
-	go build ./...
+	go build
 
-.PHONY: check
 check:
-	$(info * running golangci-lint code checks)
 	golangci-lint run
-
-.PHONY: test
-test:
-	$(info * running tests)
-	go test -race ./...
 
 .PHONY: integrationtest
 integrationtest:

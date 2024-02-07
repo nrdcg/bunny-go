@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -26,7 +27,7 @@ const (
 )
 
 const (
-	hdrContentTypeName = "content-type"
+	hdrContentTypeName = "Content-Type"
 	contentTypeJSON    = "application/json"
 )
 
@@ -56,10 +57,10 @@ var discardLogF = func(string, ...interface{}) {}
 // The APIKey can be found in on the Account Settings page.
 //
 // Bunny.net API docs: https://support.bunny.net/hc/en-us/articles/360012168840-Where-do-I-find-my-API-key-
-func NewClient(APIKey string, opts ...Option) *Client {
+func NewClient(apiKey string, opts ...Option) *Client {
 	clt := Client{
 		baseURL:          mustParseURL(BaseURL),
-		apiKey:           APIKey,
+		apiKey:           apiKey,
 		httpClient:       *http.DefaultClient,
 		userAgent:        DefaultUserAgent,
 		httpRequestLogf:  discardLogF,
@@ -92,12 +93,12 @@ func mustParseURL(urlStr string) *url.URL {
 // urlStr maybe absolute or relative, if it is relative it is joined with
 // client.baseURL.
 func (c *Client) newRequest(method, urlStr string, body io.Reader) (*http.Request, error) {
-	url, err := c.baseURL.Parse(urlStr)
+	endpoint, err := c.baseURL.Parse(urlStr)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, url.String(), body)
+	req, err := http.NewRequest(method, endpoint.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +205,8 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		if urlErr, ok := err.(*url.Error); ok {
+		var urlErr *url.Error
+		if errors.As(err, &urlErr) {
 			if urlErr.Timeout() && ctx.Err() != nil {
 				return ctx.Err()
 			}
@@ -215,7 +217,7 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 
 	c.logResponse(resp, logReqID)
 
-	defer resp.Body.Close() //nolint: errcheck
+	defer resp.Body.Close()
 
 	if err := c.checkResp(req, resp); err != nil {
 		return err
@@ -272,10 +274,9 @@ func (c *Client) checkResp(req *http.Request, resp *http.Response) error {
 	}
 }
 
-// parseHTTPRespErrBody processes the body of an http.Response with an non 2xx
-// status code.
+// parseHTTPRespErrBody processes the body of a http.Response with a non 2xx status code.
 // If the response body is empty, baseErr is returned.
-// If the body could no be parsed because of an error, the occurred errors are
+// If the body could not be parsed because of an error, the occurred errors are
 // added to baseErr and baseErr is returned.
 // If the body contains json data it is parsed and an APIError is returned.
 func (c *Client) parseHTTPRespErrBody(resp *http.Response, baseErr *HTTPError) error {

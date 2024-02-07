@@ -52,10 +52,5 @@ type VideoLibraryUpdateOptions struct {
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_updatepullzone
 func (s *VideoLibraryService) Update(ctx context.Context, id int64, opts *VideoLibraryUpdateOptions) (*VideoLibrary, error) {
 	path := fmt.Sprintf("videolibrary/%d", id)
-	return resourcePostWithResponse[VideoLibrary](
-		ctx,
-		s.client,
-		path,
-		opts,
-	)
+	return resourcePostWithResponse[VideoLibrary](ctx, s.client, path, opts)
 }
