@@ -38,6 +38,7 @@ linters:
     - nilnil
     - nlreturn
     - noctx
+    - noinlineerr
     - nonamedreturns
     - paralleltest
     - prealloc

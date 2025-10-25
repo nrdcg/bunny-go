@@ -32,7 +32,7 @@ const (
 )
 
 // Logf is a log function signature.
-type Logf func(format string, v ...interface{})
+type Logf func(format string, v ...any)
 
 // Client is a Bunny CDN HTTP API Client.
 type Client struct {
@@ -51,7 +51,7 @@ type Client struct {
 	VideoLibrary *VideoLibraryService
 }
 
-var discardLogF = func(string, ...interface{}) {}
+var discardLogF = func(string, ...any) {}
 
 // NewClient returns a new bunny.net API client.
 // The APIKey can be found in on the Account Settings page.
@@ -117,19 +117,20 @@ func (c *Client) newRequest(method, urlStr string, body io.Reader) (*http.Reques
 // newGetRequest creates an bunny.NET API GET request.
 // params must be a struct or nil, it is encoded into a query parameter.
 // The struct must contain  `url` tags of the go-querystring package.
-func (c *Client) newGetRequest(urlStr string, params interface{}) (*http.Request, error) {
+func (c *Client) newGetRequest(urlStr string, params any) (*http.Request, error) {
 	if params != nil {
 		queryvals, err := query.Values(params)
 		if err != nil {
 			return nil, err
 		}
+
 		urlStr = urlStr + "?" + queryvals.Encode()
 	}
 
 	return c.newRequest(http.MethodGet, urlStr, nil)
 }
 
-func toJSON(data interface{}) (io.Reader, error) {
+func toJSON(data any) (io.Reader, error) {
 	var buf io.ReadWriter
 
 	if data == nil {
@@ -149,7 +150,7 @@ func toJSON(data interface{}) (io.Reader, error) {
 
 // newPostRequest creates a bunny.NET API POST request.
 // If body is not nil, it is encoded as JSON and send as HTTP-Body.
-func (c *Client) newPostRequest(urlStr string, body interface{}) (*http.Request, error) {
+func (c *Client) newPostRequest(urlStr string, body any) (*http.Request, error) {
 	buf, err := toJSON(body)
 	if err != nil {
 		return nil, err
@@ -165,7 +166,7 @@ func (c *Client) newPostRequest(urlStr string, body interface{}) (*http.Request,
 
 // newDeleteRequest creates a bunny.NET API DELETE request.
 // If body is not nil, it is encoded as JSON and send as HTTP-Body.
-func (c *Client) newDeleteRequest(urlStr string, body interface{}) (*http.Request, error) {
+func (c *Client) newDeleteRequest(urlStr string, body any) (*http.Request, error) {
 	buf, err := toJSON(body)
 	if err != nil {
 		return nil, err
@@ -176,7 +177,7 @@ func (c *Client) newDeleteRequest(urlStr string, body interface{}) (*http.Reques
 
 // newPutRequest creates a bunny.NET API PUT request.
 // If body is not nil, it is encoded as JSON and sent as a HTTP-Body.
-func (c *Client) newPutRequest(urlStr string, body interface{}) (*http.Request, error) {
+func (c *Client) newPutRequest(urlStr string, body any) (*http.Request, error) {
 	buf, err := toJSON(body)
 	if err != nil {
 		return nil, err
@@ -196,7 +197,7 @@ func (c *Client) newPutRequest(urlStr string, body interface{}) (*http.Request, 
 // If the server returned a status code that is not 2xx an HTTPError is returned.
 // If the HTTP request was successful, the response body is read and
 // unmarshaled into result.
-func (c *Client) sendRequest(ctx context.Context, req *http.Request, result interface{}) error {
+func (c *Client) sendRequest(ctx context.Context, req *http.Request, result any) error {
 	if ctx != nil {
 		req = req.WithContext(ctx)
 	}
@@ -305,10 +306,11 @@ func (c *Client) parseHTTPRespErrBody(resp *http.Response, baseErr *HTTPError) e
 	}
 
 	apiErr.HTTPError = *baseErr
+
 	return &apiErr
 }
 
-func (c *Client) unmarshalHTTPJSONBody(resp *http.Response, reqURL string, result interface{}) error {
+func (c *Client) unmarshalHTTPJSONBody(resp *http.Response, reqURL string, result any) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return &HTTPError{
@@ -372,6 +374,7 @@ func (c *Client) logRequest(req *http.Request) string {
 	accessKey := req.Header.Get(AccessKeyHeaderKey)
 	if accessKey != "" {
 		req.Header.Set(AccessKeyHeaderKey, "***hidden***")
+
 		defer func() { req.Header.Set(AccessKeyHeaderKey, accessKey) }()
 	}
 

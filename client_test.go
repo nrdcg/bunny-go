@@ -25,7 +25,6 @@ func TestCheckRespWithEmptyUnsuccessfulResp(t *testing.T) {
 
 	err = clt.checkResp(req, &resp)
 	require.Error(t, err)
-	require.IsType(t, &HTTPError{}, err)
 
 	var httpErr *HTTPError
 	assert.ErrorAs(t, err, &httpErr)
@@ -43,6 +42,7 @@ func TestCheckRespWithJSONBody(t *testing.T) {
 	require.NoError(t, err)
 
 	const reqURL = "http://test.de"
+
 	req, err := http.NewRequest(http.MethodGet, reqURL, nil)
 	require.NoError(t, err)
 
@@ -59,7 +59,6 @@ func TestCheckRespWithJSONBody(t *testing.T) {
 
 	err = clt.checkResp(req, &resp)
 	require.Error(t, err)
-	require.IsType(t, &APIError{}, err, "error: "+err.Error())
 
 	var retAPIErr *APIError
 	assert.ErrorAs(t, err, &retAPIErr)
@@ -88,7 +87,6 @@ func TestCheckRespWithJSONBodyAndMissingContentType(t *testing.T) {
 
 	err = clt.checkResp(req, &resp)
 	require.Error(t, err)
-	require.IsType(t, &HTTPError{}, err, "error: "+err.Error())
 
 	var retErr *HTTPError
 	assert.ErrorAs(t, err, &retErr)
@@ -142,8 +140,6 @@ func TestUnmarshalHTTPJSONBodyWithMissingContentType(t *testing.T) {
 	err = clt.unmarshalHTTPJSONBody(&resp, url, &msgOut)
 	require.Error(t, err)
 
-	require.IsType(t, &HTTPError{}, err)
-
 	var httpErr *HTTPError
 	assert.ErrorAs(t, err, &httpErr)
 	assert.Equal(t, httpErr.RequestURL, url)
@@ -175,8 +171,6 @@ func TestUnmarshalHTTPJSONBodyWithWrongContentType(t *testing.T) {
 	url := "http://test.de"
 	err = clt.unmarshalHTTPJSONBody(&resp, url, &msgOut)
 	require.Error(t, err)
-
-	require.IsType(t, &HTTPError{}, err)
 
 	var httpErr *HTTPError
 	assert.ErrorAs(t, err, &httpErr)

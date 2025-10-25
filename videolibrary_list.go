@@ -21,6 +21,7 @@ type VideoLibraryListOpts struct {
 // Bunny.net API docs: https://docs.bunny.net/reference/videolibrarypublic_index
 func (s *VideoLibraryService) List(ctx context.Context, opts *VideoLibraryListOpts) (*VideoLibraries, error) {
 	const path = "/videolibrary"
+
 	var res VideoLibraries
 
 	// NOTE: The resourceList function is not used for the purpose of

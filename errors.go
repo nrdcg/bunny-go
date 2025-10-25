@@ -60,6 +60,7 @@ func (e *AuthenticationError) Error() string {
 // failures.
 type APIError struct {
 	HTTPError
+
 	ErrorKey string `json:"ErrorKey"`
 	Field    string `json:"Field"`
 	Message  string `json:"Message"`
@@ -71,6 +72,7 @@ func (e *APIError) Error() string {
 	var res strings.Builder
 
 	res.WriteString(e.HTTPError.Error())
+
 	if e.ErrorKey != "" {
 		res.WriteString(", ")
 		res.WriteString(e.ErrorKey)
