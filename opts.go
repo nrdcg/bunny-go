@@ -1,5 +1,7 @@
 package bunny
 
+import "net/http"
+
 // Option is a type for Client options.
 type Option func(*Client)
 
@@ -28,5 +30,16 @@ func WithUserAgent(userAgent string) Option {
 func WithLogger(logger Logf) Option {
 	return func(clt *Client) {
 		clt.logf = logger
+	}
+}
+
+// WithHTTPClient is an option to set the http.Client used by the bunny client.
+func WithHTTPClient(client *http.Client) Option {
+	return func(clt *Client) {
+		if client == nil {
+			return
+		}
+
+		clt.httpClient = client
 	}
 }

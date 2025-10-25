@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
@@ -39,7 +40,7 @@ type Client struct {
 	baseURL *url.URL
 	apiKey  string
 
-	httpClient       http.Client
+	httpClient       *http.Client
 	httpRequestLogf  Logf
 	httpResponseLogf Logf
 	logf             Logf
@@ -61,7 +62,7 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	clt := Client{
 		baseURL:          mustParseURL(BaseURL),
 		apiKey:           apiKey,
-		httpClient:       *http.DefaultClient,
+		httpClient:       &http.Client{Timeout: 10 * time.Second},
 		userAgent:        DefaultUserAgent,
 		httpRequestLogf:  discardLogF,
 		httpResponseLogf: discardLogF,
