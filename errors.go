@@ -25,9 +25,8 @@ type HTTPError struct {
 func (e *HTTPError) Error() string {
 	var res strings.Builder
 
-	res.WriteString(fmt.Sprintf("http-request to %s failed: %s (%d)",
-		e.RequestURL, http.StatusText(e.StatusCode), e.StatusCode,
-	))
+	_, _ = fmt.Fprintf(&res, "http-request to %s failed: %s (%d)",
+		e.RequestURL, http.StatusText(e.StatusCode), e.StatusCode)
 
 	if len(e.Errors) > 0 {
 		res.WriteString(", errors: " + strings.Join(errorsToStrings(e.Errors), ", "))
